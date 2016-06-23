@@ -69,6 +69,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     private void setViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         editTextEmail = (EditText) findViewById(R.id.email);
+        editTextEmail.setText(AppController.getInstance().getPreferences().getUserName());
         editTextPassword = (EditText) findViewById(R.id.password);
         buttonLogIn = (Button) findViewById(R.id.log_in);
         buttonSignUp = (Button) findViewById(R.id.sign_up);
