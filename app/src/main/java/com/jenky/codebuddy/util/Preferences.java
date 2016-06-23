@@ -86,7 +86,7 @@ public class Preferences {
 
     public void reset() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
+        sharedPreferences.edit().putString(SESSION_TOKEN, "").apply();
         editor.commit();
     }
 
