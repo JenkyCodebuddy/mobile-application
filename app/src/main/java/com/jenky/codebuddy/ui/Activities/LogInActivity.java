@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.jenky.codebuddy.R;
 import com.jenky.codebuddy.api.Callback;
 import com.jenky.codebuddy.api.Request;
@@ -116,7 +118,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = IntentFactory.getMainIntent(AppController.getInstance());
         startActivity(intent);
         finish();
-        Request.setMessagingToken(Preferences.messagingCallback);
+        Request.setMessagingToken(Preferences.messagingCallback, FirebaseInstanceId.getInstance().getToken());
     }
 
     private void goToSignUp() {

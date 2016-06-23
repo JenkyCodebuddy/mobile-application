@@ -113,18 +113,13 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
         switch (id) {
             case R.id.log_out:
-                Preferences.logOut();
+                Preferences.logOut(progressBar);
                 break;
             default:
                 Log.e("onClick", getString(R.string.unknown_id));
                 break;
         }
     }
-
-    public static void purchaseItem(Item item) {
-
-    }
-
 
 
     public List<Item> getItems() {

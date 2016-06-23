@@ -179,8 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
         switch (id) {
             case R.id.log_out:
-                Preferences.logOut();
-                progressBar.setVisibility(View.VISIBLE);
+                Preferences.logOut(progressBar);
                 break;
             default:
                 Log.e("onClick", getString(R.string.unknown_id));

@@ -40,6 +40,7 @@ public class Request {
         //Expect response in json format
 
         Log.i("Request", methodId + ": " + url);
+        Log.i("Token:", AppController.getInstance().getPreferences().getSessionToken());
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(methodId, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -197,12 +198,28 @@ public class Request {
         );
     }
 
-    public static void setMessagingToken(Callback callback) {
+    public static void setMessagingToken(Callback callback, String token) {
         Map<String, String> messagingToken = new HashMap<>();
-        String token = AppController.getInstance().getPreferences().getMessageToken();
+        Log.e("Send:", "SendingToken");
+        Log.e("MessageToken:", token);
+        Log.e("AuthToken:", AppController.getInstance().getPreferences().getSessionToken());
         messagingToken.put("messagingtoken", token);
         executeRequest(Method.POST,
                 API + "messaging/notifications",
+                callback,
+                messagingToken,
+                "set_messaging_token"
+        );
+
+    }
+
+    public static void removeMessagingToken(Callback callback) {
+        Map<String, String> messagingToken = new HashMap<>();
+        String token = AppController.getInstance().getPreferences().getSessionToken();
+        Log.e("Remove:", "RemoveToken");
+        Log.e("AuthToken:", AppController.getInstance().getPreferences().getSessionToken());
+        executeRequest(Method.POST,
+                API + "messaging/logout",
                 callback,
                 messagingToken,
                 "set_messaging_token"

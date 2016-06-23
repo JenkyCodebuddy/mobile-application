@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -22,9 +23,7 @@ import java.io.IOException;
 
 public class Preferences {
     public static final String SESSION_TOKEN = "session_token";
-    public static final String MESSAGING_TOKEN = "messaging_token";
     public static final String USER_NAME = "user_name";
-    public static final String STATUS = "status";
 
     private SharedPreferences sharedPreferences;
 
@@ -38,17 +37,27 @@ public class Preferences {
         public void onFailed(JSONObject result) throws JSONException {
         }
     };
+    public static void logOut(final ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
+        Request.removeMessagingToken(new Callback() {
+            @Override
+            public void onSuccess(JSONObject result) throws JSONException {
+                Toast.makeText(AppController.getInstance(), result.getString("responseMessage"), Toast.LENGTH_SHORT).show();
+                AppController.getInstance().getPreferences().reset();
+                Log.e("logOut:", "now");
+                Log.e("AuthToken logOut:", AppController.getInstance().getPreferences().getSessionToken());
+                Intent intent = IntentFactory.getLogInIntent(AppController.getInstance());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                AppController.getInstance().startActivity(intent);
+            }
 
-
-    public static void logOut() {
-        new deleteNotificationToken().execute();
-        AppController.getInstance().getPreferences().reset();
-        Intent intent = IntentFactory.getLogInIntent(AppController.getInstance());
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        AppController.getInstance().startActivity(intent);
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d("MessageToken", "Refreshed token: " + refreshedToken);
+            @Override
+            public void onFailed(JSONObject result) throws JSONException {
+                Toast.makeText(AppController.getInstance(), "Failed to Log out", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     public Preferences(Context appContext) {
@@ -63,17 +72,6 @@ public class Preferences {
     public String getSessionToken() {
         return sharedPreferences.getString(SESSION_TOKEN, "");
     }
-
-
-    public void setMessageToken(String token) {
-        sharedPreferences.edit().putString(MESSAGING_TOKEN, token).apply();
-    }
-
-    public String getMessageToken() {
-        return sharedPreferences.getString(MESSAGING_TOKEN, "");
-    }
-
-
 
 
     public void setUserName(String mUserName) {
@@ -94,19 +92,6 @@ public class Preferences {
 
     public Boolean hasCredentials() {
         return AppController.getInstance().getPreferences().getSessionToken() == null || AppController.getInstance().getPreferences().getSessionToken().equals("");
-    }
-
-    public static class deleteNotificationToken extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                FirebaseInstanceId.getInstance().deleteInstanceId();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
     }
 }
 
